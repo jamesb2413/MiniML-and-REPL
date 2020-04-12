@@ -25,7 +25,7 @@ let repl () =
   (* lexical analyzer buffer from stdin *)
   let lexbuf = Lexing.from_channel stdin in
   (* set up the initial environment *)
-  let env = Ev.Env.create () in
+  let env = Ev.Env.empty () in
   printf "Entering %s...\n" Sys.argv.(0);
   flush stdout;
   while true do

@@ -4,7 +4,6 @@
 */
                   
 %{
-  open Printf ;;
   open Expr ;;
 %}
 
