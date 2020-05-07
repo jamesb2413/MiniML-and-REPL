@@ -151,6 +151,15 @@ let eval_bin (op : binop) (i1 : int) (i2 : int) : expr =
   | Equals -> bool_op (=) i1 i2
   | LessThan -> bool_op (<) i1 i2 ;;
 
+(* Unable to get this extension to compile *)
+(* let f_eval_bin (op : binop) (f1 : float) (f2 : float) : expr =
+  match op with
+  | Plus -> Float (f1 +. f2)
+  | Minus -> Float (f1 -. f2)
+  | Times -> Float (f1 *. f2)
+  | Equals -> Float (f1 = f2)
+  | LessThan -> Float (f1 < f2) ;; *)
+
 (* The SUBSTITUTION MODEL evaluator -- to be completed *)
 
 let rec eval_s (exp : expr) (_env : Env.env) : Env.value =

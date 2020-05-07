@@ -24,6 +24,7 @@ type varid = string ;;
 type expr =
   | Var of varid                         (* variables *)
   | Num of int                           (* integers *)
+  (*| Float of float                       (* floats *) *)
   | Bool of bool                         (* booleans *)
   | Unop of unop * expr                  (* unary operators *)
   | Binop of binop * expr * expr         (* binary operators *)
@@ -162,6 +163,7 @@ let rec exp_to_concrete_string (exp : expr) : string =
   match exp with
   | Var s -> s
   | Num i -> string_of_int i
+  (*| Float f -> string_of_float f *)
   | Bool b -> string_of_bool b
   | Unop (_, e) -> "-" ^ r e
   | Binop (op, e1, e2) -> r e1 ^ binop_conc op ^ r e2
@@ -199,6 +201,7 @@ let rec exp_to_abstract_string (exp : expr) : string =
   match exp with
   | Var s -> "Var" ^ par s
   | Num i -> "Num" ^ par (string_of_int i)
+  (*| Float f -> "Float" ^ par (string_of_float f)*)
   | Bool b -> "Bool" ^ par (string_of_bool b)
   | Unop (_, e) -> "Negate" ^ par (r e)
   | Binop (op, e1, e2) -> "Binop" ^ three_arg (binop_abstr op) (r e1) (r e2)

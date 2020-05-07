@@ -1,4 +1,3 @@
-Nick Barna
 CS51
 Final Project Extensions writeup
 May 6, 2020
@@ -24,3 +23,10 @@ the repl prints:
 Let(x, Num(1), App(Var(f), Num(21)))))
 s=> 42
 d=> 21
+
+
+I also tried to implement floats and float operators, but I had trouble
+with mli and cmi files and was unable to completely finish that extension
+and get it to compile. In attempts to implement floats, I'm confident that
+given more time, it would be pretty simple to add all additional atomic types
+and the corresponding literals and operators.
