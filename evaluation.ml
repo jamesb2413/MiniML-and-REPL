@@ -68,19 +68,39 @@ module Env : ENV =
     let empty () : env = [] ;;
 
     let close (exp : expr) (env : env) : value =
-      failwith "close not implemented" ;;
+      Closure (exp, env) ;;
 
-    let lookup (env : env) (varname : varid) : value =
-      failwith "lookup not implemented" ;;
+    let rec lookup (env : env) (varname : varid) : value =
+      match env with
+      | [] -> raise (EvalError ("unbound variable " ^ varname))
+      | h :: tl ->
+        let (s, rval) = h in
+        if s = varname then !rval else lookup tl varname ;;
 
-    let extend (env : env) (varname : varid) (loc : value ref) : env =
-      failwith "extend not implemented" ;;
+    let rec extend (env : env) (varname : varid) (loc : value ref) : env =
+      match env with
+      | [] -> [(varname, loc)]
+      | h :: t ->
+        let (s, rval) = h in
+        if s = varname then
+          begin rval := !loc; ((s, rval) :: t) end
+        else h ::(extend t varname loc) ;;
 
-    let value_to_string ?(printenvp : bool = true) (v : value) : string =
-      failwith "value_to_string not implemented" ;;
-
-    let env_to_string (env : env) : string =
-      failwith "env_to_string not implemented" ;;
+    let rec env_to_string (env : env) : string =
+      match env with
+      | [] -> ""
+      | h :: t ->
+        let (s, rval) = h in s ^ " = " ^ value_to_string !rval ^
+                             env_to_string t
+    and
+    value_to_string ?(printenvp : bool = true) (v : value) : string =
+      match v with
+      | Val exp -> exp_to_concrete_string exp
+      | Closure (exp, env) ->
+        if printenvp then
+          "Closure (value: " ^ exp_to_concrete_string exp ^
+          ", environment: " ^ env_to_string env ^ ")"
+        else exp_to_concrete_string exp ;;
   end
 ;;
 
@@ -113,62 +133,96 @@ let eval_t (exp : expr) (_env : Env.env) : Env.value =
   (* coerce the expr, unchanged, into a value *)
   Env.Val exp ;;
 
+(* helper abstractions *)
+let r (e_v : Env.value): expr =
+  match e_v with
+  | Val e_out -> e_out
+  | _ -> raise EvalException ;;
+
+let eval_bin (op : binop) (i1 : int) (i2 : int) : expr =
+  let int_op (op : int -> int -> int) int1 int2 : expr =
+    Num ((op) int1 int2) in
+  let bool_op (op : int -> int -> bool) int1 int2 : expr =
+    Bool ((op) int1 int2) in
+  match op with
+  | Plus -> int_op (+) i1 i2
+  | Minus -> int_op (-) i1 i2
+  | Times -> int_op ( * ) i1 i2
+  | Equals -> bool_op (=) i1 i2
+  | LessThan -> bool_op (<) i1 i2 ;;
+
 (* The SUBSTITUTION MODEL evaluator -- to be completed *)
 
 let rec eval_s (exp : expr) (_env : Env.env) : Env.value =
   (* helper abstractions *)
-  let r (e_in : expr) : expr =
-    let env_val = eval_s e_in _env in
-    match env_val with
-    | Val e_out -> e_out
-    | _ -> raise EvalException in
-  let eval_bin (op : binop) (i1 : int) (i2 : int) : expr =
-    let int_op (op : int -> int -> int) int1 int2 : expr =
-      Num ((op) int1 int2) in
-    let bool_op (op : int -> int -> bool) int1 int2 : expr =
-      Bool ((op) int1 int2) in
-    match op with
-    | Plus -> int_op (+) i1 i2
-    | Minus -> int_op (-) i1 i2
-    | Times -> int_op ( * ) i1 i2
-    | Equals -> bool_op (=) i1 i2
-    | LessThan -> bool_op (<) i1 i2 in
+  let env_val e_in = eval_s e_in _env in
   (* output *)
   match exp with
     (* bottom *)
+  | Var v -> raise (EvalError ("unbound variable " ^ v))
   | Num i -> Val (Num i)
   | Bool b -> Val (Bool b)
-  | Unop (n, e) -> Val (Unop (n, r e))
+  | Unop (n, e) -> Val (Unop (n, r (env_val e)))
   | Binop (op, e1, e2) ->
-    (match r e1, r e2 with
+    (match r (env_val e1), r (env_val e2) with
      | Num i1, Num i2 -> Val (eval_bin op i1 i2)
      | _ -> raise EvalException)
     (* recursive *)
   | Conditional (e1, e2, e3) ->
-    if r e1 = Bool true then Val (r e2) else Val (r e3)
-  | Let (s, e1, e2) ->
-    (* check for free variables *)
-    let freeless : bool = same_vars (free_vars exp) (vars_of_list []) in
-    if freeless then Val (r (subst s e1 e2))
-    else
-      raise (EvalError "unbound variable")
+    if r (env_val e1) = Bool true then Val (r (env_val e2))
+    else Val (r (env_val e3))
+  | Let (s, e1, e2) -> Val (r (env_val (subst s e1 e2)))
   | Letrec (s, e1, e2) ->
     (* evaluation with recursion *)
-    Val (r (subst s (subst s (Letrec(s, e1, Var (s))) e1) e2))
+    Val (r (env_val (subst s (subst s (Letrec(s, e1, Var (s))) e1) e2)))
   | App (e1, e2) ->
-    (match r e1 with
-     | Fun (s, e) -> Val (r (subst s e2 e))
+    (match r (env_val e1) with
+     | Fun (s, e) -> Val (r (env_val (subst s e2 e)))
      | _ -> raise (EvalError "bad redex"))
   | Raise
   | Unassigned -> raise EvalException
   | _ -> Val (exp)
-   ;;
+  ;;
 
 (* The DYNAMICALLY-SCOPED ENVIRONMENT MODEL evaluator -- to be
    completed *)
 
-let eval_d (_exp : expr) (_env : Env.env) : Env.value =
-  failwith "eval_d not implemented" ;;
+let rec eval_d (exp : expr) (env : Env.env) : Env.value =
+  (* helper abstractions *)
+  let env_val e_in = eval_d e_in env in
+  match exp with
+  | Var v ->
+    let map = Env.lookup env v in
+    (match map with
+    | Val Unassigned -> raise (EvalError "impossible recursion")
+    | _ -> map)
+  | Num i -> Val (Num i)
+  | Bool b -> Val (Bool b)
+  | Unop (n, e) -> Val (Unop (n, r (env_val e)))
+  | Binop (op, e1, e2) ->
+    (match r (env_val e1), r (env_val e2) with
+     | Num i1, Num i2 -> Val (eval_bin op i1 i2)
+     | _ -> raise EvalException)
+  | Conditional (e1, e2, e3) ->
+    if r (env_val e1) = Bool true then Val (r (env_val e2))
+    else Val (r (env_val e3))
+  | Let (s, e1, e2) ->
+    eval_d e2 (Env.extend env s (ref (Env.Val (r (env_val e1)))))
+  | Letrec (s, e1, e2) ->
+    eval_d e2
+           (Env.extend env s
+                       (ref (eval_d e1
+                                    (Env.extend env s
+                                                (ref (Env.Val Unassigned))))))
+  | App (e1, e2) ->
+    (match r (env_val e1) with
+     | Fun (s, e) ->
+       eval_d e (Env.extend env s (ref (Env.Val (r (env_val e2)))))
+     | _ -> raise (EvalError "bad redex"))
+  | Raise
+  | Unassigned -> raise EvalException
+  | Fun _ -> Val (exp)
+   ;;
 
 (* The LEXICALLY-SCOPED ENVIRONMENT MODEL evaluator -- optionally
    completed as (part of) your extension *)

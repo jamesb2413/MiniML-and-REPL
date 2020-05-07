@@ -71,4 +71,4 @@ let _ =
   assert (e = Fun ("x", Var "y"));
 ;;
 
-(* tested eval_s manually *)
+(* tested eval_s and eval_d manually *)
