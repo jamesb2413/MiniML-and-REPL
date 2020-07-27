@@ -109,7 +109,7 @@ module Env : ENV =
   Evaluation functions
 
   Each of the evaluation functions below evaluates an expression `exp`
-  in an enviornment `env` returning a result of type `value`. We've
+  in an environment `env` returning a result of type `value`. We've
   provided an initial implementation for a trivial evaluator, which
   just converts the expression unchanged to a `value` and returns it,
   along with "stub code" for three more evaluators: a substitution
