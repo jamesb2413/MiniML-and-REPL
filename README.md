@@ -1,5 +1,5 @@
 
-## Miniml: A Small Subset of an OCaml-like Language and a REPL (Read-Eval-Print Loop)
+## MiniML: A Small Subset of an OCaml-like Language and a REPL (Read-Eval-Print Loop)
 
 
 
