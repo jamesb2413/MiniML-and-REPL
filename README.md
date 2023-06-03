@@ -1,5 +1,5 @@
 
-## REPL (Read-Eval-Print Loop) for a Small Untyped ML-like Language
+## Miniml: A REPL (Read-Eval-Print Loop) for a Small Untyped ML-like Language
 
 
 
