@@ -7,7 +7,8 @@ Completed as a final project for Harvard's course on Abstraction and Design in C
 [Install OCaml](https://ocaml.org/docs/up-and-running#installing-ocaml). 
 
 The parser in _miniml_lex.mll_ makes use of the OCaml package _menhir_, which is a parser generator for OCaml. 
-Install with ```opam install -y menhir```
+Install with 
+```opam install -y menhir```
 
 evaluation.ml implements a small untyped ML-like language under
 various operational semantics.
