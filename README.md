@@ -4,7 +4,7 @@
 Completed as a final project for Harvard's course on Abstraction and Design in Computing.
 
 # Environment
-[Install OCaml](https://ocaml.org/docs/up-and-running#installing-ocaml). 
+First, [Install OCaml](https://ocaml.org/docs/up-and-running#installing-ocaml). 
 
 This project uses ocamlbuild to compile. Insall with
 ```
