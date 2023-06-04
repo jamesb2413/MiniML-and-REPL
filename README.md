@@ -6,9 +6,10 @@ Completed as a final project for Harvard's course on Abstraction and Design in C
 # Environment
 First, [Install OCaml](https://ocaml.org/docs/up-and-running#installing-ocaml). 
 
-This project uses ocamlbuild to compile. Insall with
+This project uses ocamlbuild and ocamlfind to compile. Install with
 ```
 opam install -y ocamlbuild
+opam install -y ocamlfind
 ```
 
 The parser in _miniml_lex.mll_ makes use of the OCaml package _menhir_, which is a parser generator for OCaml. 
