@@ -1,7 +1,7 @@
 
 ## MiniML: A Small Subset of an OCaml-like Language and a REPL (Read-Eval-Print Loop)
 
-Completed as a final project for Harvard's course CS51 on Abstraction and Design in Computing. MiniML implements only a subset of OCaml constructs and has only limited support for types. Still, it is a Turing-complete language. The implementation of MiniML is in the form of a series of metacircular interpreters, since they are written in OCaml itself.
+Completed as a final project for Harvard's course CS51 on Abstraction and Design in Computing. MiniML implements only a subset of OCaml constructs and has only limited support for types. Still, it is a Turing-complete language. The implementation of MiniML is a series of metacircular interpreters, since they are written in OCaml itself.
 
 # Code Layout
 evaluation.ml implements a small untyped ML-like language under
