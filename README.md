@@ -20,6 +20,14 @@ s=> 24
 d=> 24
 ```
 
+Another example to demonstrate the difference between substitution semantics and dynamic scoped environment semantics:
+```
+<== let x = 2 in let f = fun y -> x * y in let x = 1 in f 21 ;;
+--> Let(x, Num(2), Let(f, Fun(y, Binop(Times, Var(x), Var(y))), Let(x, Num(1), App(Var(f), Num(21)))))
+s=> 42 
+d=> 21
+```
+
 # Code Layout
 evaluation.ml implements a small untyped ML-like language under
 various operational semantics.
