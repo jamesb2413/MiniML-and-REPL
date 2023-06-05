@@ -3,11 +3,28 @@
 
 Completed as a final project for Harvard's course CS51 on Abstraction and Design in Computing. MiniML implements only a subset of OCaml constructs and has only limited support for types. Still, it is a Turing-complete language. The implementation of MiniML is in the form of a series of metacircular interpreters, since they are written in OCaml itself.
 
+# Functionality
+When a user inputs MiniML code into the REPL (followed by `;;`), the subsequent printouts display
+
+```
+--> the abstract syntax tree of the input concrete syntax
+s=> the evaluation using [substitution model semantics](https://book.cs51.io/pdfs/abstraction-13-substitution.pdf)
+d=> the evaluation using [dynamically scoped environment model semantics](https://book.cs51.io/pdfs/abstraction-19-environments.pdf)
+```
+
+For example, a recursive factorial function:
+```
+<==  let rec f = fun x -> if x = 0 then 1 else x * f (x - 1) in f 4 ;;
+--> Letrec(f, Fun(x, Conditional(Binop(Equals, Var(x), Num(0)), Num(1), Binop(Times, Var(x), App(Var(f), Binop(Minus, Var(x), Num(1)))))), App(Var(f), Num(4)))
+s=> 24
+d=> 24
+```
+
 # Code Layout
 evaluation.ml implements a small untyped ML-like language under
 various operational semantics.
 
-miniml.ml implements the REPL (read-eval-print loop)
+miniml.ml implements the REPL (read-eval-print loop).
 
 # Environment
 This project works in the [environment setup for Harvard's CS51 course](https://cs51.io/handouts/setup/). If you have any problems with the instructions here, visit that site to follow a more detailed setup tutorial.
