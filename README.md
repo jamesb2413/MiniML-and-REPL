@@ -3,6 +3,12 @@
 
 Completed as a final project for Harvard's course CS51 on Abstraction and Design in Computing. MiniML implements only a subset of OCaml constructs and has only limited support for types. Still, it is a Turing-complete language. The implementation of MiniML is in the form of a series of metacircular interpreters, since they are written in OCaml itself.
 
+# Code Layout
+evaluation.ml implements a small untyped ML-like language under
+various operational semantics.
+
+miniml.ml implements the REPL (read-eval-print loop).
+
 # Functionality
 When a user inputs MiniML code into the REPL (followed by `;;`), the subsequent printouts display
 
@@ -27,12 +33,6 @@ Another example to demonstrate the difference between substitution semantics and
 s=> 42 
 d=> 21
 ```
-
-# Code Layout
-evaluation.ml implements a small untyped ML-like language under
-various operational semantics.
-
-miniml.ml implements the REPL (read-eval-print loop).
 
 # Environment
 This project works in the [environment setup for Harvard's CS51 course](https://cs51.io/handouts/setup/). If you have any problems with the instructions here, visit that site to follow a more detailed setup tutorial.
